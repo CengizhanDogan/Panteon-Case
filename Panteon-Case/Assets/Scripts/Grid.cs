@@ -4,32 +4,30 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    private int width;
-    private int height;
+    public int[,] GridArray { get; private set; }
+
+    public int Width { get; private set; }
+    public int Height { get; private set; }
     private float cellSize;
     private Vector3 originPosition;
-    private int[,] gridArray;
+
     public Grid(int width, int height, float cellSize, Vector3 originPosition, GameObject gridImage, GridManager manager)
     {
-        this.width = width;
-        this.height = height;
+        Width = width;
+        Height = height;
         this.cellSize = cellSize;
         this.originPosition = originPosition;
 
-        gridArray = new int[width, height];
+        GridArray = new int[width, height];
         this.cellSize = cellSize;
 
-        for (int x = 0; x < gridArray.GetLength(0); x++)
+        for (int x = 0; x < GridArray.GetLength(0); x++)
         {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
+            for (int y = 0; y < GridArray.GetLength(1); y++)
             {
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
                 Instantiate(gridImage, GetWorldPosition(x + (cellSize / 2), y + (cellSize / 2)), Quaternion.identity, manager.transform);
             }
         }
-        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
     }
 
     public Vector3 GetWorldPosition(float x, float y)
@@ -39,15 +37,15 @@ public class Grid : MonoBehaviour
 
     public void GetXY(Vector3 worldPosition, out int x, out int y)
     {
-        x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
-        y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
+        x = (Mathf.RoundToInt(worldPosition.x) - Mathf.RoundToInt(originPosition.x));
+        y = (Mathf.RoundToInt(worldPosition.y) - Mathf.RoundToInt(originPosition.y));
     }
 
     public void SetValue(int x, int y, int value)
     {
-        if (x >= 0 && y >= 0 && x < width && y < height)
+        if (x >= 0 && y >= 0 && x < Width && y < Height)
         {
-            gridArray[x, y] = value;
+            GridArray[x, y] = value;
         }
     }
 
@@ -60,9 +58,9 @@ public class Grid : MonoBehaviour
 
     public int GetValue(int x, int y)
     {
-        if (x >= 0 && y >= 0 && x < width && y < height)
+        if (x >= 0 && y >= 0 && x < Width && y < Height)
         {
-            return gridArray[x, y];
+            return GridArray[x, y];
         }
         else
         {
