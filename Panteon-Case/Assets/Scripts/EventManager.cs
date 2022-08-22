@@ -11,10 +11,13 @@ public static class EventManager
 
 	public static PlaceableEvent OnPlaceableEvent = new PlaceableEvent();
 	public static UnavailableEvent OnUnavailableEvent = new UnavailableEvent();
+
+	public static SelectionEvent OnSelectionEvent = new SelectionEvent();
 }
 
-public class BuildingBoughtEvent : UnityEvent <SpriteRenderer , Transform , int>{ }
+public class BuildingBoughtEvent : UnityEvent <SpriteRenderer , int>{ }
 public class GridMoveEvent : UnityEvent<BuildingMovement, Vector2>{ }
 public class BuildingPlaceEvent : UnityEvent<BuildingMovement, Vector2> { }
 public class PlaceableEvent : UnityEvent{ }
 public class UnavailableEvent : UnityEvent { }
+public class SelectionEvent : UnityEvent<Entity> { }

@@ -7,14 +7,14 @@ public class BuildingMovement : MonoBehaviour
     private bool following;
     [HideInInspector] public bool placeable;
 
-    private Collider coll;
+    private Collider2D coll;
 
     [HideInInspector] public Transform gfxTransform;
-    [HideInInspector] public Collider gfxCollider;
+    [HideInInspector] public Collider2D gfxCollider;
 
     private void Awake()
     {
-        coll = GetComponent<Collider>();
+        coll = GetComponent<Collider2D>();
     }
 
     private void Start()
@@ -56,6 +56,8 @@ public class BuildingMovement : MonoBehaviour
                 transform.position = ClosestCorner(corner);
                 following = false;
                 EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2);
+                gfxTransform.gameObject.AddComponent<UnitBehaviour>();
+                Destroy(this);
             }
             yield return null;
         }

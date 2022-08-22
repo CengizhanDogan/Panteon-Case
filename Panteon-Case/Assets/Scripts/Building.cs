@@ -2,42 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Building", menuName = "Building", order = 1)]
-public class Building : ScriptableObject
+[CreateAssetMenu(fileName = "New Building", menuName = "GameEntities/Building", order = 1)]
+public class Building : Entity
 {
-    public string buildingName;
-    public Sprite visual;
-    public Material material;
-    public int cost;
-
-    public void CreateObjects(Transform transform)
+    public List<Unit> unitList = new List<Unit>();
+    public override void CreateObjects()
     {
-        GameObject gfx = new GameObject("GFX");
-        
-        var gfxRenderer = gfx.AddComponent<SpriteRenderer>();
-
-        gfxRenderer.sprite = visual;
-        gfxRenderer.material = material;
-        gfxRenderer.sortingOrder = 3;
-
-        var gfxCollider = gfx.AddComponent<BoxCollider>();
-
-        gfx.transform.SetParent(transform);
-        gfx.transform.localPosition = Vector3.zero;
+        base.CreateObjects();
 
         GameObject mover = new GameObject("Mover");
-        
-        var moverCollider = mover.AddComponent<BoxCollider>();
+
+        mover.layer = LayerMask.NameToLayer("Input");
+
+        var moverCollider = mover.AddComponent<BoxCollider2D>();
         var buildingMovement = mover.AddComponent<BuildingMovement>();
         
-        moverCollider.size = gfxCollider.size;
+        moverCollider.size = gfx.GetComponent<BoxCollider2D>().size;
         
-        mover.transform.SetParent(transform);
+        mover.transform.SetParent(gfx.transform);
         mover.transform.localPosition = Vector3.zero;
 
         buildingMovement.gfxTransform = gfx.transform;
-        buildingMovement.gfxCollider = gfx.GetComponent<Collider>();
+        buildingMovement.gfxCollider = gfx.GetComponent<Collider2D>();
 
-        EventManager.OnBuildingBought.Invoke(gfxRenderer, transform, cost);
+        EventManager.OnBuildingBought.Invoke(gfx.GetComponent<SpriteRenderer>(), cost);
     }
 }

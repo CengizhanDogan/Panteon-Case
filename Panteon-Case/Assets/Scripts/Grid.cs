@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grid : MonoBehaviour
+public class Grid
 {
     public int[,] GridArray { get; private set; }
 
@@ -20,14 +20,6 @@ public class Grid : MonoBehaviour
 
         GridArray = new int[width, height];
         this.cellSize = cellSize;
-
-        for (int x = 0; x < GridArray.GetLength(0); x++)
-        {
-            for (int y = 0; y < GridArray.GetLength(1); y++)
-            {
-                Instantiate(gridImage, GetWorldPosition(x + (cellSize / 2), y + (cellSize / 2)), Quaternion.identity, manager.transform);
-            }
-        }
     }
 
     public Vector3 GetWorldPosition(float x, float y)

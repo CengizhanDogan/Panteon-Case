@@ -8,9 +8,9 @@ public class Corner
     [HideInInspector] public Vector3 CornerPos { get; private set; }
 
     private Transform buildingTransform;
-    private Collider buildingCollider;
+    private Collider2D buildingCollider;
 
-    public Corner(Collider coll, Transform transform)
+    public Corner(Collider2D coll, Transform transform)
     {
         buildingCollider = coll;
         buildingTransform = transform;

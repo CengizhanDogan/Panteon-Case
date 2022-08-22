@@ -29,5 +29,13 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         MainGrid = new Grid(gridWidth, gridHeight, 1f, new Vector3(-gridWidth, -gridHeight) * .5f, gridImage, this);
+
+        for (int x = 0; x < MainGrid.GridArray.GetLength(0); x++)
+        {
+            for (int y = 0; y < MainGrid.GridArray.GetLength(1); y++)
+            {
+                Instantiate(gridImage, MainGrid.GetWorldPosition(x + (1f / 2), y + (1f / 2)), Quaternion.identity, transform);
+            }
+        }
     }
 }

@@ -24,7 +24,7 @@ public class BuildingMaterial : MonoBehaviour
         EventManager.OnUnavailableEvent.RemoveListener(ChangeToUnavailable);
         EventManager.OnBuildingPlace.RemoveListener(ChangeToDefault);
     }
-    private void SetRenderer(SpriteRenderer rend, Transform t, int i)
+    private void SetRenderer(SpriteRenderer rend, int i)
     {
         spriteRenderer = rend;
         defaultMat = spriteRenderer.material;
