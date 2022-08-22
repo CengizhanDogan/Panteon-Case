@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Building", menuName = "GameEntities/Building", order = 1)]
-public class Building : Entity
+public class Building : Unit
 {
-    public List<Unit> unitList = new List<Unit>();
+    public List<Unit> craftingList = new List<Unit>();
     public override void CreateObjects()
     {
         base.CreateObjects();
 
-        GameObject mover = new GameObject("Mover");
+        gfx.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        mover.layer = LayerMask.NameToLayer("Input");
+        GameObject mover = new GameObject("Mover");
 
         var moverCollider = mover.AddComponent<BoxCollider2D>();
         var buildingMovement = mover.AddComponent<BuildingMovement>();

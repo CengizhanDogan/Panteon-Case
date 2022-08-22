@@ -8,8 +8,6 @@ public class TestButton : MonoBehaviour
     
     public void ButtonPress()
     {
-        GameObject buildingObject = new GameObject(building.entityName);
-        buildingObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         building.CreateObjects();
     }
 }

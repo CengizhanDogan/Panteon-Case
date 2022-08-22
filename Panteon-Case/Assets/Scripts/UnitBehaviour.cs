@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class UnitBehaviour : MonoBehaviour
 {
-    public Entity entity;
-    private void OnMouseDown()
+    public Unit unit;
+
+    public void GetSelected()
     {
-        EventManager.OnSelectionEvent.Invoke(entity);
+        EventManager.OnSelectionEvent.Invoke(unit);
     }
 }

@@ -56,8 +56,8 @@ public class BuildingMovement : MonoBehaviour
                 transform.position = ClosestCorner(corner);
                 following = false;
                 EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2);
-                gfxTransform.gameObject.AddComponent<UnitBehaviour>();
-                Destroy(this);
+                
+                Destroy(coll);
             }
             yield return null;
         }
