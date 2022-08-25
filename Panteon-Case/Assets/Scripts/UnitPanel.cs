@@ -22,17 +22,19 @@ public class UnitPanel : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnSelectionEvent.AddListener(SetPanel);
-        EventManager.OnDeselectEvent.AddListener(ClosePanel);
+        EventManager.OnDeselectEvent.AddListener(ResetPanel);
     }
 
     private void OnDisable()
     {
         EventManager.OnSelectionEvent.RemoveListener(SetPanel);
-        EventManager.OnDeselectEvent.RemoveListener(ClosePanel);
+        EventManager.OnDeselectEvent.RemoveListener(ResetPanel);
     }
 
     private void SetPanel(Unit unit)
     {
+        ResetPanel();
+
         panel.SetActive(true);
 
         SetCraftingPanel(unit as Building);
@@ -77,7 +79,7 @@ public class UnitPanel : MonoBehaviour
             craftPanels[i].GetComponent<CraftingPanel>().SetButton(building.craftingList[i],building.gfx.transform.position + Vector3.one * 0.5f, building.craftingList[i].unitName, building.craftingList[i].visual);
         }
     }
-    private void ClosePanel()
+    private void ResetPanel()
     {
         for (int i = 0; i < craftPanels.Count; i++)
         {

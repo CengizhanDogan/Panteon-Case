@@ -60,7 +60,7 @@ public class Pathfinding
                 if (closedList.Contains(neighbourNode) || neighbourNode.occupied) continue;
 
                 int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbourNode);
-                if(tentativeGCost < neighbourNode.gCost)
+                if (tentativeGCost < neighbourNode.gCost)
                 {
                     neighbourNode.cameFromNode = currentNode;
                     neighbourNode.gCost = tentativeGCost;
@@ -82,28 +82,45 @@ public class Pathfinding
     private List<PathNode> GetNeighbourList(PathNode currentNode)
     {
         List<PathNode> neighbourList = new List<PathNode>();
-
+        PathNode downNode = null;
+        PathNode upNode = null;
         // Down
-        if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x, currentNode.y - 1));
+        if (currentNode.y - 1 >= 0)
+        {
+            downNode = GetNode(currentNode.x, currentNode.y - 1);
+            neighbourList.Add(downNode);
+        }
         // Up
-        if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x, currentNode.y + 1));
+        if (currentNode.y + 1 < grid.Height)
+        {
+            upNode = GetNode(currentNode.x, currentNode.y + 1);
+            neighbourList.Add(upNode);
+        }
         if (currentNode.x - 1 >= 0)
         {
             // Left
             neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y));
             // Left Down
-            if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));
+            if (downNode != null)
+                if (!neighbourList[neighbourList.Count - 1].occupied || !downNode.occupied)
+                    if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y - 1));
             // Left Up
-            if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
+            if (upNode != null)
+                if (!neighbourList[neighbourList.Count - 1].occupied || !upNode.occupied)
+                    if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
         }
         if (currentNode.x + 1 < grid.Width)
         {
             // Right
             neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y));
             // Right Down
-            if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));
+            if (downNode != null)
+                if (!neighbourList[neighbourList.Count - 1].occupied || !downNode.occupied)
+                    if (currentNode.y - 1 >= 0) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y - 1));
             // Right Up
-            if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
+            if (upNode != null)
+                if (!neighbourList[neighbourList.Count - 1].occupied || !upNode.occupied)
+                    if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
         }
 
         return neighbourList;
