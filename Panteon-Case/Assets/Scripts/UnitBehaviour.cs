@@ -5,6 +5,7 @@ using UnityEngine;
 public class UnitBehaviour : MonoBehaviour
 {
     public Unit unit;
+    public bool isStaticObject;
 
     public void GetSelected()
     {

@@ -6,11 +6,13 @@ using UnityEngine;
 public class Building : Unit
 {
     public List<Unit> craftingList = new List<Unit>();
-    public override void CreateObjects()
+    public override void CreateObjects(Vector2 spawnPos)
     {
-        base.CreateObjects();
+        base.CreateObjects(spawnPos);
 
         gfx.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        behaviour.isStaticObject = true;
 
         GameObject mover = new GameObject("Mover");
 

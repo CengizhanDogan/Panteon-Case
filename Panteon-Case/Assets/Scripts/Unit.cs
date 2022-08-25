@@ -10,6 +10,7 @@ public class Unit : ScriptableObject
     public int cost;
 
     public UnitAttributes attributes;
+    public UnitBehaviour behaviour;
 
     [HideInInspector] public GameObject gfx;
 
@@ -17,9 +18,11 @@ public class Unit : ScriptableObject
     {
         attributes.unitName = unitName;
     }
-    public virtual void CreateObjects()
+    public virtual void CreateObjects(Vector2 spawnPos)
     {
         gfx = new GameObject(unitName);
+
+        gfx.transform.position = spawnPos;
 
         var gfxRenderer = gfx.AddComponent<SpriteRenderer>();
 
@@ -29,8 +32,8 @@ public class Unit : ScriptableObject
 
         gfx.AddComponent<BoxCollider2D>();
 
-        UnitBehaviour unitBehaviour = gfx.AddComponent<UnitBehaviour>();
+        behaviour = gfx.AddComponent<UnitBehaviour>();
 
-        unitBehaviour.unit = this;
+        behaviour.unit = this;
     }
 }

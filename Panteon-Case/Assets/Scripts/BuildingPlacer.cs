@@ -33,9 +33,7 @@ public class BuildingPlacer : MonoBehaviour
         {
             for (int y = gridY; y < gridY + size.y; y++)
             {
-                int gridValue = GridManager.Instance.MainGrid.GetValue(x, y);
-
-                if (gridValue != 0)
+                if (GridManager.Instance.MainGrid.GetGridObject(x, y).occupied)
                 {
                     EventManager.OnUnavailableEvent.Invoke();
                     return;
@@ -57,7 +55,7 @@ public class BuildingPlacer : MonoBehaviour
         {
             for (int y = gridY; y < gridY + size.y; y++)
             {
-                GridManager.Instance.MainGrid.SetValue(x, y, 99);
+                GridManager.Instance.MainGrid.GetGridObject(x, y).occupied = true;
             }
         }
     }

@@ -14,6 +14,19 @@ public class Raycast
         }
     }
 
+    public GameObject SelectedObject()
+    {
+        if (!ClickedOnObject) return null;
+
+        if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
+        {
+            if (!unit.isStaticObject)
+                return unit.gameObject;
+        }
+
+        return null;
+    }
+
     private bool ClickedOnObject
     {
         get

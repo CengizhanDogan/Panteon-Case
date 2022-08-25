@@ -35,13 +35,15 @@ public class Corner
 
         foreach (Vector3 grid in RelativeGridPositions())
         {
-            float closestCorner = Vector3.Distance(CornerPos, grid);
+            Vector3 fixedPos = grid - Vector3.one * 0.5f;
+
+            float closestCorner = Vector3.Distance(CornerPos, fixedPos);
 
             if (closestCorner < distance)
             {
                 distance = closestCorner;
 
-                closestGrid = grid;
+                closestGrid = fixedPos;
             }
         }
 
@@ -49,12 +51,11 @@ public class Corner
     }
     private List<Vector3> RelativeGridPositions()
     {
-        Grid grid = GridManager.Instance.MainGrid;
+        Grid<PathNode> grid = GridManager.Instance.MainGrid;
 
         List<Vector3> grids = new List<Vector3>();
 
-        int gridX, gridY;
-        grid.GetXY(this.CornerPos, out gridX, out gridY);
+        grid.GetXY(this.CornerPos, out  int gridX, out int gridY);
 
         grids.Add(grid.GetPosition(this.CornerPos));
         grids.Add(grid.GetWorldPosition(gridX + 1, gridY));

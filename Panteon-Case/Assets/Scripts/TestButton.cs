@@ -8,6 +8,6 @@ public class TestButton : MonoBehaviour
     
     public void ButtonPress()
     {
-        building.CreateObjects();
+        building.CreateObjects(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 }
