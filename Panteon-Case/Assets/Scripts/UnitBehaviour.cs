@@ -9,6 +9,6 @@ public class UnitBehaviour : MonoBehaviour
 
     public void GetSelected()
     {
-        EventManager.OnSelectionEvent.Invoke(unit);
+        EventManager.OnSelectionEvent.Invoke(unit, transform);
     }
 }

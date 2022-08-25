@@ -58,6 +58,9 @@ public class GridManager : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(1))
         {
+            if (!moveObject) return;
+            if (moveObject.GetComponent<UnitBehaviour>().isStaticObject) return;
+
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             pathfinding.GetGrid().GetXY(new Vector2(mousePos.x, mousePos.y), out int x, out int y);
             List<PathNode> path = pathfinding.FindPath((int)objectGrid.x, (int)objectGrid.y, x, y);

@@ -27,7 +27,7 @@ public class BuildingPlacer : MonoBehaviour
 
         Corner corner = new Corner(building.gfxCollider, building.gfxTransform);
         int gridX, gridY;
-        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.2f, out gridX, out gridY);
+        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
 
         for (int x = gridX; x < gridX + size.x; x++)
         {
@@ -49,7 +49,7 @@ public class BuildingPlacer : MonoBehaviour
     {
         Corner corner = new Corner(building.gfxCollider, building.gfxTransform);
         int gridX, gridY;
-        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.1f, out gridX, out gridY);
+        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
 
         for (int x = gridX; x < gridX + size.x; x++)
         {

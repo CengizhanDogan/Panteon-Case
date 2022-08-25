@@ -31,13 +31,13 @@ public class UnitPanel : MonoBehaviour
         EventManager.OnDeselectEvent.RemoveListener(ResetPanel);
     }
 
-    private void SetPanel(Unit unit)
+    private void SetPanel(Unit unit, Transform transform)
     {
         ResetPanel();
 
         panel.SetActive(true);
 
-        SetCraftingPanel(unit as Building);
+        SetCraftingPanel(unit as Building, transform);
 
         UnitAttributes attributes = unit.attributes;
 
@@ -48,7 +48,7 @@ public class UnitPanel : MonoBehaviour
 
         unitImage.sprite = attributes.unitImage;
     }
-    private void SetCraftingPanel(Building building)
+    private void SetCraftingPanel(Building building, Transform transform)
     {
         if (!building)
         {
@@ -76,7 +76,9 @@ public class UnitPanel : MonoBehaviour
 
             craftPanels.Add(Instantiate(craftPanel, craftingPanel.transform.position, Quaternion.identity, craftingPanel.transform));
             craftPanels[i].GetComponent<RectTransform>().localPosition = new Vector3(x * -100, y * -150, 0);
-            craftPanels[i].GetComponent<CraftingPanel>().SetButton(building.craftingList[i],building.gfx.transform.position + Vector3.one * 0.5f, building.craftingList[i].unitName, building.craftingList[i].visual);
+            craftPanels[i].GetComponent<CraftingPanel>().SetButton(building.craftingList[i], transform.position + Vector3.one * 0.5f, building.craftingList[i].unitName, building.craftingList[i].visual);
+
+            Debug.Log(building.gfx, building.gfx);
         }
     }
     private void ResetPanel()
