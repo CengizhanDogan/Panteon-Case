@@ -38,7 +38,7 @@ public class Raycast
                     return true;
                 }
 
-                EventManager.OnDeselectEvent.Invoke();
+                EventManager.OnDeselectEvent.Invoke(true);
             }
 
             return false;
