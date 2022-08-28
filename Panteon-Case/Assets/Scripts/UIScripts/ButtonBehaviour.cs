@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Managers;
 
 public class ButtonBehaviour : MonoBehaviour
 {
-    public BuildingPanelManager leftPanelManager;
-    public Building building;
+    private ObjectPooler Pooler => ObjectPooler.Instance;
+    public BuildingPanel leftPanelManager;
+    public BuildingObject building;
 
     [SerializeField] private Image image;
 
@@ -15,20 +17,9 @@ public class ButtonBehaviour : MonoBehaviour
     private float topButtonValue;
     private float bottomButtonValue;
 
-    public float TopOfButton
-    {
-        get
-        {
-            return transform.position.y + 2.778137f;
-        }
-    }
-    public float BottomOfButton
-    {
-        get
-        {
-            return transform.position.y - 2.778137f;
-        }
-    }
+    public float TopOfButton => transform.position.y + 2.778137f;
+    public float BottomOfButton => transform.position.y - 2.778137f;
+
     private void Awake()
     {
         button = GetComponent<Button>();
@@ -38,7 +29,7 @@ public class ButtonBehaviour : MonoBehaviour
     {
         if (building)
         {
-            button.onClick.AddListener(delegate { ButtonPress(); });
+            button.onClick.AddListener(delegate { BuyBuilding(); });
             image.sprite = building.visual;
         }
         else
@@ -72,10 +63,10 @@ public class ButtonBehaviour : MonoBehaviour
 
         }
     }
-    public void ButtonPress()
+    public void BuyBuilding()
     {
-        building.CreateObjects(Camera.main.ScreenToWorldPoint(Input.mousePosition), 5, out var unit, false, null);
+        Pooler.SpawnFromPool(building.unitName, InputManager.MousePosition, Quaternion.identity, out var boughtObject);
+        EventManager.OnBuildingBought.Invoke(boughtObject.GetComponent<SpriteRenderer>(), building.cost);
+        boughtObject.GetComponentInChildren<IPlaceableBuilding>().Move();
     }
-
-
 }

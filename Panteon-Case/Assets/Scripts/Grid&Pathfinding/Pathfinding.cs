@@ -1,38 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Managers;
 public class Pathfinding
 {
     private const int MOVE_STRAIGHT_COST = 10;
     private const int MOVE_DIAGONAL_COST = 14;
 
-    private Grid<PathNode> grid;
+    private Grid<PathNode> Grid => GridManager.MainGrid;
     private List<PathNode> openList;
     private List<PathNode> closedList;
-    public Pathfinding(int width, int height)
-    {
-        grid = GridManager.Instance.MainGrid;
-    }
-
     public Grid<PathNode> GetGrid()
     {
-        return grid;
+        return Grid;
     }
 
     public List<PathNode> FindPath(int startX, int startY, int endX, int endY, bool checkOccupied)
     {
-        PathNode startNode = grid.GetGridObject(startX, startY);
-        PathNode endNode = grid.GetGridObject(endX, endY);
+        PathNode startNode = Grid.GetGridObject(startX, startY);
+        PathNode endNode = Grid.GetGridObject(endX, endY);
 
         openList = new List<PathNode> { startNode };
         closedList = new List<PathNode>();
 
-        for (int x = 0; x < grid.Width; x++)
+        for (int x = 0; x < Grid.Width; x++)
         {
-            for (int y = 0; y < grid.Height; y++)
+            for (int y = 0; y < Grid.Height; y++)
             {
-                PathNode pathNode = grid.GetGridObject(x, y);
+                PathNode pathNode = Grid.GetGridObject(x, y);
                 pathNode.gCost = int.MaxValue;
                 pathNode.CalculateFCost();
                 pathNode.cameFromNode = null;
@@ -92,7 +87,7 @@ public class Pathfinding
             neighbourList.Add(downNode);
         }
         // Up
-        if (currentNode.y + 1 < grid.Height)
+        if (currentNode.y + 1 < Grid.Height)
         {
             upNode = GetNode(currentNode.x, currentNode.y + 1);
             neighbourList.Add(upNode);
@@ -108,9 +103,9 @@ public class Pathfinding
             // Left Up
             if (upNode != null)
                 if (!neighbourList[neighbourList.Count - 1].occupied || !upNode.occupied)
-                    if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
+                    if (currentNode.y + 1 < Grid.Height) neighbourList.Add(GetNode(currentNode.x - 1, currentNode.y + 1));
         }
-        if (currentNode.x + 1 < grid.Width)
+        if (currentNode.x + 1 < Grid.Width)
         {
             // Right
             neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y));
@@ -121,14 +116,14 @@ public class Pathfinding
             // Right Up
             if (upNode != null)
                 if (!neighbourList[neighbourList.Count - 1].occupied || !upNode.occupied)
-                    if (currentNode.y + 1 < grid.Height) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
+                    if (currentNode.y + 1 < Grid.Height) neighbourList.Add(GetNode(currentNode.x + 1, currentNode.y + 1));
         }
 
         return neighbourList;
     }
     private PathNode GetNode(int x, int y)
     {
-        return grid.GetGridObject(x, y);
+        return Grid.GetGridObject(x, y);
     }
     private List<PathNode> CalculatePath(PathNode endNode)
     {

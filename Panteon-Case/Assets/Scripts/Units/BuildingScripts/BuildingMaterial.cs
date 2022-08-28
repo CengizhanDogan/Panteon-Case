@@ -27,7 +27,8 @@ public class BuildingMaterial : MonoBehaviour
     private void SetRenderer(SpriteRenderer rend, int i)
     {
         spriteRenderer = rend;
-        defaultMat = spriteRenderer.material;
+        defaultMat = spriteRenderer.sharedMaterial;
+        spriteRenderer.sortingOrder = 5;
     }
 
     private void ChangeToPlaceable()

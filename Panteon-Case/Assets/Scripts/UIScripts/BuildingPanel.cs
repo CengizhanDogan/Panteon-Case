@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Managers;
 
-public class BuildingPanelManager : MonoBehaviour
+public class BuildingPanel : MonoBehaviour
 {
-    [SerializeField] private List<Building> buildingList = new List<Building>();
     [SerializeField] private List<ButtonBehaviour> buttonList = new List<ButtonBehaviour>();
 
     [SerializeField] private RectTransform scrollObject;
@@ -15,9 +15,18 @@ public class BuildingPanelManager : MonoBehaviour
 
     private void Awake()
     {
-        for (int i = 0; i < buildingList.Count; i++)
+        int i = 0;
+        foreach (var unitObject in UnitObjectManager.UnitObjects)
         {
-            buttonList[i].building = buildingList[i];
+            BuildingObject building = unitObject as BuildingObject;
+
+            if (!building) continue;
+
+            if (building.buyable)
+            {
+                buttonList[i].building = building;
+                i++;
+            }
         }
         foreach (ButtonBehaviour button in buttonList)
         {

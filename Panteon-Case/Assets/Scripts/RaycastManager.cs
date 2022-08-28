@@ -2,29 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Raycast
+public class RaycastManager
 {
+    public GameObject SelectedObject { get; private set; }
     public void SelectObject()
     {
         if (!ClickedOnObject) return;
 
         if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
         {
+            SelectedObject = unit.gameObject;
+            Debug.Log(unit.gameObject);
             unit.GetSelected();
         }
-    }
-
-    public GameObject SelectedObject()
-    {
-        if (!ClickedOnObject) return null;
-
-        if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
-        {
-            if (!unit.isStaticObject)
-                return unit.gameObject;
-        }
-
-        return null;
     }
 
     private bool ClickedOnObject

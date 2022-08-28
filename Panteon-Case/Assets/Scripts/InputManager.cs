@@ -2,16 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+namespace Managers
 {
-    public Raycast ray;
+    public class InputManager : MonoBehaviour
+    {
+        private RaycastManager ray;
 
-    void Start()
-    {
-        ray = new Raycast();
-    }
-    private void Update()
-    {
-        ray.SelectObject();
+        private static Camera cam;
+        public static Vector3 MousePosition => cam.ScreenToWorldPoint(Input.mousePosition);
+
+        private void Start()
+        {
+            cam = Camera.main;
+            ray = new RaycastManager();
+        }
+        private void Update()
+        {
+            ray.SelectObject();
+        }
     }
 }

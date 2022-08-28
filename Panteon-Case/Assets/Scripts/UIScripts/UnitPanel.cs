@@ -33,18 +33,18 @@ public class UnitPanel : MonoBehaviour
         EventManager.OnDeselectEvent.RemoveListener(ResetPanel);
     }
 
-    private void SetPanel(Unit unit, Transform transform)
+    private void SetPanel(UnitBehaviour unitBehaviour, Transform transform)
     {
         ResetPanel(false);
         AnimatePanel();
 
         panel.SetActive(true);
 
-        SetProductionPanel(unit as Building, transform);
+        SetProductionPanel(unitBehaviour as BuildingBehaviour, transform);
 
-        UnitAttributes attributes = unit.attributes;
+        UnitAttributes attributes = unitBehaviour.unit.attributes;
 
-        unitName.text = attributes.unitName;
+        unitName.text = unitBehaviour.unit.unitName;
         healthAttribute.text = $"Health: {attributes.unitHealth}";
         damageAttribute.text = $"Damage: {attributes.unitDamage}";
         speedAttribute.text = $"Speed: {attributes.unitSpeed}";
@@ -58,7 +58,7 @@ public class UnitPanel : MonoBehaviour
         transform.DOMoveX(13.5f, 0.5f);
     }
 
-    private void SetProductionPanel(Building building, Transform transform)
+    private void SetProductionPanel(BuildingBehaviour building, Transform transform)
     {
         if (!building)
         {
@@ -66,14 +66,21 @@ public class UnitPanel : MonoBehaviour
             return;
         }
 
-        if (building.productionList.Count > 0)
+        BuildingObject buildingObject = building.unit as BuildingObject;
+
+        if (buildingObject.productionList.Count > 0)
         {
             productionPanel.SetActive(true);
+        }
+        else
+        {
+            productionPanel.SetActive(false);
+            return;
         }
 
         int x = 1;
         int y = 0;
-        for (int i = 0; i < building.productionList.Count; i++)
+        for (int i = 0; i < buildingObject.productionList.Count; i++)
         {
             if (i % 2 == 0)
             {
@@ -86,7 +93,7 @@ public class UnitPanel : MonoBehaviour
 
             productionPanels.Add(Instantiate(craftPanel, productionPanel.transform.position, Quaternion.identity, productionPanel.transform));
             productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector3(x * -100, y * -150, 0);
-            productionPanels[i].GetComponent<ProductionPanel>().SetButton(building.productionList[i], transform.position + Vector3.one * 0.5f, building.productionList[i].unitName, building.productionList[i].visual, building.flagObject);
+            productionPanels[i].GetComponent<ProductionPanel>().SetButton(buildingObject.productionList[i], transform.position + Vector3.one * 0.5f, buildingObject.productionList[i].unitName, buildingObject.productionList[i].visual, building.flagTransform);
         }
     }
     private void ResetPanel(bool close)

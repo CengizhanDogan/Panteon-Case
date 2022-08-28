@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Managers;
 public class BuildingPlacer : MonoBehaviour
 {
     [SerializeField] private List<RectTransform> imgRectTransforms = new List<RectTransform>();
+    private Grid<PathNode> Grid => GridManager.MainGrid;
 
     private void OnEnable()
     {
@@ -25,15 +26,15 @@ public class BuildingPlacer : MonoBehaviour
             return;
         }
 
-        Corner corner = new Corner(building.gfxCollider, building.gfxTransform);
+        Corner corner = new Corner(building.unitCollider, building.unitTransform);
         int gridX, gridY;
-        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
+        Grid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
 
         for (int x = gridX; x < gridX + size.x; x++)
         {
             for (int y = gridY; y < gridY + size.y; y++)
             {
-                if (GridManager.Instance.MainGrid.GetGridObject(x, y).occupied)
+                if (Grid.GetGridObject(x, y).occupied)
                 {
                     EventManager.OnUnavailableEvent.Invoke();
                     return;
@@ -47,15 +48,15 @@ public class BuildingPlacer : MonoBehaviour
 
     private void PlaceOnGrid(BuildingMovement building, Vector2 size, int i)
     {
-        Corner corner = new Corner(building.gfxCollider, building.gfxTransform);
+        Corner corner = new Corner(building.unitCollider, building.unitTransform);
         int gridX, gridY;
-        GridManager.Instance.MainGrid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
+        Grid.GetXY(corner.CornerPos + Vector3.one * 0.1f + Vector3.up * 0.5f, out gridX, out gridY);
 
         for (int x = gridX; x < gridX + size.x; x++)
         {
             for (int y = gridY; y < gridY + size.y; y++)
             {
-                GridManager.Instance.MainGrid.GetGridObject(x, y).occupied = true;
+                Grid.GetGridObject(x, y).occupied = true;
             }
         }
     }

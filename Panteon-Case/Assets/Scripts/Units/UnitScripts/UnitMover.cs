@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Managers;
 
 public class UnitMover : MonoBehaviour
 {
@@ -9,8 +10,6 @@ public class UnitMover : MonoBehaviour
 
     private Vector2 objectGrid;
     private GameObject moveObject;
-
-    private GridManager grigManager;
 
     #region Singleton
     public static UnitMover Instance { get; private set; }
@@ -29,8 +28,7 @@ public class UnitMover : MonoBehaviour
 
     void Start()
     {
-        grigManager = GridManager.Instance;
-        pathfinding = new Pathfinding(grigManager.gridWidth, grigManager.gridHeight);
+        pathfinding = new Pathfinding();
     }
 
     void Update()
@@ -43,10 +41,10 @@ public class UnitMover : MonoBehaviour
         if (!moveObject) return;
         this.moveObject = moveObject;
 
-        grigManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
+        GridManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
         Vector2 objectGrid = new Vector2(x, y);
 
-        grigManager.MainGrid.GetXY(flag.position, out var z, out var t);
+        GridManager.MainGrid.GetXY(flag.position, out var z, out var t);
         List<PathNode> path = pathfinding.FindPath((int)objectGrid.x, (int)objectGrid.y, z, t, false);
 
         Move(path, 1);
@@ -56,17 +54,18 @@ public class UnitMover : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Raycast ray = new Raycast();
+            RaycastManager ray = new RaycastManager();
 
-            moveObject = ray.SelectedObject();
+            moveObject = ray.SelectedObject;
+            Debug.Log(moveObject);
             if (!moveObject) return;
-            grigManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
+            GridManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
             objectGrid = new Vector2(x, y);
         }
         if (Input.GetMouseButtonDown(1))
         {
             if (!moveObject) return;
-            if (moveObject.GetComponent<UnitBehaviour>().isStaticObject) return;
+            if (moveObject.TryGetComponent(out BuildingBehaviour b)) return;
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             pathfinding.GetGrid().GetXY(new Vector2(mousePos.x, mousePos.y) + Vector2.up * 0.5f, out int x, out int y);
@@ -79,10 +78,10 @@ public class UnitMover : MonoBehaviour
     {
         if (path != null)
         {
-            Vector2 gridPos = grigManager.MainGrid.GetWorldPosition(path[i].x, path[i].y);
+            Vector2 gridPos = GridManager.MainGrid.GetWorldPosition(path[i].x, path[i].y);
             moveObject.transform.DOMove(gridPos, 7).SetSpeedBased().SetEase(Ease.Linear).OnUpdate(() =>
             {
-                grigManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
+                GridManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
                 objectGrid = new Vector2(x, y);
             }).OnComplete(() =>
             {
