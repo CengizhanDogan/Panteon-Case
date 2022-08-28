@@ -92,7 +92,7 @@ public class UnitPanel : MonoBehaviour
             }
 
             productionPanels.Add(Instantiate(craftPanel, productionPanel.transform.position, Quaternion.identity, productionPanel.transform));
-            productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector3(x * -100, y * -150, 0);
+            productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector2(x * -100, y * -150);
             productionPanels[i].GetComponent<ProductionPanel>().SetButton(buildingObject.productionList[i], transform.position + Vector3.one * 0.5f, buildingObject.productionList[i].unitName, buildingObject.productionList[i].visual, building.flagTransform);
         }
     }

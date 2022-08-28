@@ -13,6 +13,7 @@ public static class ObjectCreator
 
         gfxRenderer.sprite = unitObject.visual;
         gfxRenderer.material = unitObject.material;
+        gfxRenderer.sortingOrder = 2;
 
         unitObject.unitGameObject.AddComponent<BoxCollider2D>();
 

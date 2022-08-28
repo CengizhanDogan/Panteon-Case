@@ -4,15 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Managers;
 
-public class BuildingMovement : MonoBehaviour, IPlaceableBuilding
+public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
 {
-    [HideInInspector] public bool placeable;
-
-    private Collider2D coll;
-
     [HideInInspector] public Transform unitTransform;
     [HideInInspector] public Collider2D unitCollider;
     [HideInInspector] public BuildingObject building;
+
+    private Collider2D coll;
+    private Vector2 anchor;
+
+    [HideInInspector] public bool placeable;
+    [HideInInspector] public bool clamp;
+
+    public bool CheckClamp { get; set; }
+
+    public bool DoClamp(Vector2 anchor)
+    {
+        this.anchor = anchor;
+        if (CheckClamp)
+            return Vector2.Distance(InputManager.MousePosition, this.anchor) > 4;
+        else return false;
+    }
 
     private void Awake()
     {
@@ -33,7 +45,7 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding
     public void Move()
     {
         SetColliders();
-        StartCoroutine(Follow(true, 3));
+        StartCoroutine(Follow(true));
     }
 
     private void SetColliders()
@@ -42,7 +54,7 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding
         unitCollider.enabled = true;
     }
 
-    public virtual IEnumerator Follow(bool following, int sortingOrder)
+    public virtual IEnumerator Follow(bool following)
     {
         Vector3 lastGrid = Vector3.zero;
         while (following)
@@ -50,15 +62,16 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding
             Corner corner = new Corner(coll, transform);
 
             CheckIfMoving(lastGrid, corner);
-            
-            transform.position = InputManager.MousePosition;
+
+            if (!DoClamp(anchor))
+                transform.position = InputManager.MousePosition;
 
             if (Input.GetMouseButtonDown(0) && placeable)
             {
                 following = false;
 
-                PlaceBuilding(corner, sortingOrder);
-                
+                PlaceBuilding(corner);
+
             }
             yield return null;
         }
@@ -75,15 +88,16 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding
         }
     }
 
-    private void PlaceBuilding(Corner corner, int sortingOrder)
+    private void PlaceBuilding(Corner corner)
     {
         transform.position = ClosestCorner(corner);
-        EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2, sortingOrder);
+        EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2, 3);
 
         unitTransform.GetComponent<BuildingBehaviour>().CreateFlag();
 
+        unitTransform.position *= (Vector2.up + Vector2.right);
+
         coll.enabled = false;
-        if (sortingOrder == 1) unitCollider.enabled = false;
     }
 
     private Vector3 ClosestCorner(Corner corner)

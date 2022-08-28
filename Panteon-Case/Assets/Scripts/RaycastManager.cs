@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class RaycastManager
 {
-    public GameObject SelectedObject { get; private set; }
     public void SelectObject()
     {
         if (!ClickedOnObject) return;
 
         if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
         {
-            SelectedObject = unit.gameObject;
-            Debug.Log(unit.gameObject);
             unit.GetSelected();
         }
     }
@@ -33,6 +30,19 @@ public class RaycastManager
 
             return false;
         }
+    }
+    public GameObject SelectedObject()
+    {
+        if (!ClickedOnObject) return null;
+
+        if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
+        {
+            BuildingBehaviour building = unit as BuildingBehaviour;
+            if (!building)
+                return unit.gameObject;
+        }
+
+        return null;
     }
 
     private RaycastHit2D Hit(Vector2 mousePos2D)

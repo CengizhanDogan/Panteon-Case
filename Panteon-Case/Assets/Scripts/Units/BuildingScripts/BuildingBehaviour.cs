@@ -14,6 +14,9 @@ public class BuildingBehaviour : UnitBehaviour
             ObjectPooler.Instance.SpawnFromPool("Flag", InputManager.MousePosition, Quaternion.identity, out var gameObject);
             EventManager.OnBuildingBought.Invoke(gameObject.GetComponent<SpriteRenderer>(), 0);
             gameObject.GetComponentInChildren<IPlaceableBuilding>().Move();
+            Vector2 myPos = transform.position;
+            gameObject.GetComponentInChildren<IClampable>().CheckClamp = true;
+            gameObject.GetComponentInChildren<IClampable>().DoClamp(myPos);
             flagTransform = gameObject.transform;
         }
     }
