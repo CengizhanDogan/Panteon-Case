@@ -2,10 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Managers;
+using Factory;
+using System;
 
 public class BuildingBehaviour : UnitBehaviour
 {
     public Transform flagTransform;
+    public void ProcessAbility()
+    {
+        UnitAbility ability = UnitAbilityFactory.GetUnit(unit.unitName);
+
+        if (ability == null) return;
+
+        ability.Process();
+    }
+
     public void CreateFlag()
     {
         BuildingObject building = unit as BuildingObject;

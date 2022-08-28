@@ -63,8 +63,15 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
 
             CheckIfMoving(lastGrid, corner);
 
-            if (!DoClamp(anchor)) transform.position = InputManager.MousePosition;
-            else transform.position = anchor;
+            Vector3 followPos = InputManager.MousePosition;
+
+            if (DoClamp(anchor)) 
+            { 
+                followPos.x = Mathf.Clamp(followPos.x, anchor.x - 3, anchor.x + 4);
+                followPos.y = Mathf.Clamp(followPos.y, anchor.y - 3, anchor.y + 4);
+            }
+
+            transform.position = followPos;
 
             if (Input.GetMouseButtonDown(0) && placeable)
             {
@@ -92,8 +99,10 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
     {
         transform.position = ClosestCorner(corner);
         EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2, 3);
+        BuildingBehaviour behaviour = unitTransform.GetComponent<BuildingBehaviour>();
 
-        unitTransform.GetComponent<BuildingBehaviour>().CreateFlag();
+        behaviour.CreateFlag();
+        behaviour.ProcessAbility();
 
         unitTransform.position *= (Vector2.up + Vector2.right);
 

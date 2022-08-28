@@ -14,6 +14,8 @@ public static class EventManager
 
     public static SelectionEvent OnSelectionEvent = new SelectionEvent();
     public static DeselectEvent OnDeselectEvent = new DeselectEvent();
+
+    public static PowerGenerationEvent OnPowerGeneration = new PowerGenerationEvent();
 }
 
 public class BuildingBoughtEvent : UnityEvent<SpriteRenderer, int> { }
@@ -23,3 +25,4 @@ public class PlaceableEvent : UnityEvent { }
 public class UnavailableEvent : UnityEvent { }
 public class SelectionEvent : UnityEvent<UnitBehaviour, Transform> { }
 public class DeselectEvent : UnityEvent<bool> { }
+public class PowerGenerationEvent : UnityEvent<int> { }
