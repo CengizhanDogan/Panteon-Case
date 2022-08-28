@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Managers;
 
 public class Corner
 {
@@ -51,7 +52,7 @@ public class Corner
     }
     private List<Vector3> RelativeGridPositions()
     {
-        Grid<PathNode> grid = GridManager.Instance.MainGrid;
+        Grid<PathNode> grid = GridManager.MainGrid;
 
         List<Vector3> grids = new List<Vector3>();
 

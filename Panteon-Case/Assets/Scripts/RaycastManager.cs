@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Raycast
+public class RaycastManager
 {
     public void SelectObject()
     {
@@ -12,19 +12,6 @@ public class Raycast
         {
             unit.GetSelected();
         }
-    }
-
-    public GameObject SelectedObject()
-    {
-        if (!ClickedOnObject) return null;
-
-        if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
-        {
-            if (!unit.isStaticObject)
-                return unit.gameObject;
-        }
-
-        return null;
     }
 
     private bool ClickedOnObject
@@ -43,6 +30,19 @@ public class Raycast
 
             return false;
         }
+    }
+    public GameObject SelectedObject()
+    {
+        if (!ClickedOnObject) return null;
+
+        if (Hit(MousePos2D).transform.TryGetComponent(out UnitBehaviour unit))
+        {
+            BuildingBehaviour building = unit as BuildingBehaviour;
+            if (!building)
+                return unit.gameObject;
+        }
+
+        return null;
     }
 
     private RaycastHit2D Hit(Vector2 mousePos2D)

@@ -21,5 +21,5 @@ public class GridMoveEvent : UnityEvent<BuildingMovement, Vector2> { }
 public class BuildingPlaceEvent : UnityEvent<BuildingMovement, Vector2, int> { }
 public class PlaceableEvent : UnityEvent { }
 public class UnavailableEvent : UnityEvent { }
-public class SelectionEvent : UnityEvent<Unit, Transform> { }
+public class SelectionEvent : UnityEvent<UnitBehaviour, Transform> { }
 public class DeselectEvent : UnityEvent<bool> { }

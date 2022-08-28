@@ -27,7 +27,8 @@ public class BuildingMaterial : MonoBehaviour
     private void SetRenderer(SpriteRenderer rend, int i)
     {
         spriteRenderer = rend;
-        defaultMat = spriteRenderer.material;
+        defaultMat = spriteRenderer.sharedMaterial;
+        spriteRenderer.sortingOrder = 5;
     }
 
     private void ChangeToPlaceable()
@@ -38,9 +39,10 @@ public class BuildingMaterial : MonoBehaviour
     {
         spriteRenderer.material = unavailableMat;
     }
-    private void ChangeToDefault(BuildingMovement b, Vector2 v, int sortingOrder)
+    private void ChangeToDefault(BuildingMovement building, Vector2 v, int sortingOrder)
     {
         spriteRenderer.material = defaultMat;
+        if(building.building.unitName == "Flag") sortingOrder = 1;
         spriteRenderer.sortingOrder = sortingOrder;
     }
 }
