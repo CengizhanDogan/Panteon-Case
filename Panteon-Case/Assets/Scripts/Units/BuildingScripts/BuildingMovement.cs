@@ -63,8 +63,8 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
 
             CheckIfMoving(lastGrid, corner);
 
-            if (!DoClamp(anchor))
-                transform.position = InputManager.MousePosition;
+            if (!DoClamp(anchor)) transform.position = InputManager.MousePosition;
+            else transform.position = anchor;
 
             if (Input.GetMouseButtonDown(0) && placeable)
             {
