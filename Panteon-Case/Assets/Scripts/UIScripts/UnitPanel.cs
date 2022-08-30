@@ -21,6 +21,8 @@ public class UnitPanel : MonoBehaviour
 
     [SerializeField] private Image unitImage;
 
+    [SerializeField] private bool isVertical;
+
     private void OnEnable()
     {
         EventManager.OnSelectionEvent.AddListener(SetPanel);
@@ -36,7 +38,6 @@ public class UnitPanel : MonoBehaviour
     private void SetPanel(UnitBehaviour unitBehaviour, Transform transform)
     {
         ResetPanel(false);
-        AnimatePanel();
 
         panel.SetActive(true);
 
@@ -50,12 +51,6 @@ public class UnitPanel : MonoBehaviour
         speedAttribute.text = $"Speed: {attributes.unitSpeed}";
 
         unitImage.sprite = attributes.unitImage;
-    }
-
-    private void AnimatePanel()
-    {
-        DOTween.Kill(this);
-        transform.DOMoveX(13.5f, 0.5f);
     }
 
     private void SetProductionPanel(BuildingBehaviour building, Transform transform)
@@ -78,22 +73,35 @@ public class UnitPanel : MonoBehaviour
             return;
         }
 
-        int x = 1;
-        int y = 0;
-        for (int i = 0; i < buildingObject.productionList.Count; i++)
+        if (isVertical)
         {
-            if (i % 2 == 0)
-            {
-                y++;
-            }
-            else
-            {
-                x *= -1;
-            }
 
-            productionPanels.Add(Instantiate(craftPanel, productionPanel.transform.position, Quaternion.identity, productionPanel.transform));
-            productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector2(x * -100, y * -150);
-            productionPanels[i].GetComponent<ProductionPanel>().SetButton(buildingObject.productionList[i], transform.position + Vector3.one * 0.5f, buildingObject.productionList[i].unitName, buildingObject.productionList[i].visual, building.flagTransform);
+            int x = 1;
+            int y = 0;
+            for (int i = 0; i < buildingObject.productionList.Count; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    y++;
+                }
+                else
+                {
+                    x *= -1;
+                }
+
+                productionPanels.Add(Instantiate(craftPanel, productionPanel.transform.position, Quaternion.identity, productionPanel.transform));
+                productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector2(x * -100, y * -150);
+                productionPanels[i].GetComponent<ProductionPanel>().SetButton(buildingObject.productionList[i], transform.position + Vector3.one * 0.5f, buildingObject.productionList[i].unitName, buildingObject.productionList[i].visual, building.flagTransform);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < buildingObject.productionList.Count; i++)
+            {
+                productionPanels.Add(Instantiate(craftPanel, productionPanel.transform.position, Quaternion.identity, productionPanel.transform));
+                productionPanels[i].GetComponent<RectTransform>().localPosition = new Vector2(i * 200, -200);
+                productionPanels[i].GetComponent<ProductionPanel>().SetButton(buildingObject.productionList[i], transform.position + Vector3.one * 0.5f, buildingObject.productionList[i].unitName, buildingObject.productionList[i].visual, building.flagTransform);
+            }
         }
     }
     private void ResetPanel(bool close)
@@ -104,7 +112,7 @@ public class UnitPanel : MonoBehaviour
             productionPanels.Remove(panel);
             Destroy(panel);
         }
-        if (close) transform.DOMoveX(23, 0.5f);
+
         panel.SetActive(false);
     }
 }

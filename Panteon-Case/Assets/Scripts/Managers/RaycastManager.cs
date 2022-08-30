@@ -25,6 +25,18 @@ public class RaycastManager
                     return true;
                 }
 
+                RectTransform[] rectTransforms = GameObject.FindObjectsOfType<RectTransform>();
+
+                foreach (RectTransform t in rectTransforms)
+                {
+                    Vector2 localMousePosition = t.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+                    if (t.rect.Contains(localMousePosition))
+                    {
+                        return false;
+                    }
+                }
+
                 EventManager.OnDeselectEvent.Invoke(true);
             }
 

@@ -11,7 +11,7 @@ namespace Managers
         private static Camera cam;
         public static Vector3 MousePosition => cam.ScreenToWorldPoint(Input.mousePosition);
 
-        private void Start()
+        private void Awake()
         {
             cam = Camera.main;
             ray = new RaycastManager();

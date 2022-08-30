@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,17 +11,17 @@ public class ObjectPooler : MonoBehaviour
     public class Pool
     {
         public string tag;
-        [HideInInspector] public GameObject gameObject;
+        public GameObject gameObject;
         public int size;
     }
 
     public List<Pool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary;
 
-    #region Singleton
     public static ObjectPooler Instance { get; private set; }
     private void Awake()
     {
+        #region Singleton
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -29,10 +30,12 @@ public class ObjectPooler : MonoBehaviour
         {
             Instance = this;
         }
-    }
-    #endregion
+        #endregion
 
-    private void Start()
+        CreatePools();
+    }
+
+    private void CreatePools()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
 
@@ -42,44 +45,50 @@ public class ObjectPooler : MonoBehaviour
 
             UnitObject unitObject = UnitObjectManager.GetUnit(pool.tag);
 
-            ObjectCreator.CreateObjects(unitObject, out var unitGameObject);
-            if(unitObject as BuildingObject) ObjectCreator.CreateMover(unitObject, out unitGameObject);
+            if (unitObject)
+            {
+                ObjectCreator.CreateObjects(unitObject, out var unitGameObject);
+                if (unitObject as BuildingObject) ObjectCreator.CreateMover(unitObject, out unitGameObject);
 
-            unitGameObject.SetActive(false);
+                unitGameObject.SetActive(false);
 
-            pool.gameObject = unitGameObject;
-            objectPool.Enqueue(unitGameObject);
+                pool.gameObject = unitGameObject;
+                objectPool.Enqueue(unitGameObject);
 
-            unitGameObject.transform.SetParent(transform);
+                unitGameObject.transform.SetParent(transform);
+            }
 
-            for (int i = 1; i < pool.size; i++)
+            for (int i = 1; i < pool.size + 1; i++)
             {
                 GameObject obj = Instantiate(pool.gameObject, transform);
                 objectPool.Enqueue(obj);
+                obj.SetActive(false);
             }
 
             poolDictionary.Add(pool.tag, objectPool);
         }
     }
 
-    public GameObject SpawnFromPool(string tag, Vector2 position, Quaternion rotation, out GameObject spawnedObject)
+    public GameObject SpawnFromPool(string tag, Vector2 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
             Debug.LogWarning($"Pool with tag {tag} doesn't exist");
-            spawnedObject = null;
             return null;
         }
 
         GameObject objectToSpawn = poolDictionary[tag].Dequeue();
-
+        
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
 
         poolDictionary[tag].Enqueue(objectToSpawn);
-
-        spawnedObject = objectToSpawn;
         return objectToSpawn;
+    }
+
+    public void DestroyPoolObject(GameObject destroyObject)
+    {
+        destroyObject.SetActive(false);
     }
 }

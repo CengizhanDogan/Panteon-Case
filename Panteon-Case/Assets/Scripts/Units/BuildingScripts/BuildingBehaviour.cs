@@ -22,7 +22,7 @@ public class BuildingBehaviour : UnitBehaviour
         BuildingObject building = unit as BuildingObject;
         if (building.productionList.Count > 0)
         {
-            ObjectPooler.Instance.SpawnFromPool("Flag", InputManager.MousePosition, Quaternion.identity, out var gameObject);
+            var gameObject = ObjectPooler.Instance.SpawnFromPool("Flag", InputManager.MousePosition, Quaternion.identity);
             EventManager.OnBuildingBought.Invoke(gameObject.GetComponent<SpriteRenderer>(), 0);
             gameObject.GetComponentInChildren<IPlaceableBuilding>().Move();
             Vector2 myPos = transform.position;

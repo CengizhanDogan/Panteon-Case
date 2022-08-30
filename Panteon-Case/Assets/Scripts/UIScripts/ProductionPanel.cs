@@ -22,7 +22,7 @@ public class ProductionPanel : MonoBehaviour
 
     private void ProduceUnit(string unitName, Vector2 spawnPos, Transform flag)
     {
-        Pooler.SpawnFromPool(unitName, spawnPos, Quaternion.identity, out var product);
+        var product = Pooler.SpawnFromPool(unitName, spawnPos, Quaternion.identity);
         UnitBehaviour behaviour = product.AddComponent<UnitBehaviour>();
         behaviour.unit = UnitObjectManager.GetUnit(unitName);
         behaviour.GetComponent<SpriteRenderer>().sortingOrder = 2;

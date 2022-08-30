@@ -6,16 +6,87 @@ using Managers;
 
 public class BuildingPanel : MonoBehaviour
 {
+    private ObjectPooler pooler;
     [SerializeField] private List<ButtonBehaviour> buttonList = new List<ButtonBehaviour>();
 
-    [SerializeField] private RectTransform scrollObject;
+    private RectTransform scrollPanel;
+    [SerializeField] private RectTransform verticalScroll;
+    [SerializeField] private RectTransform horizontalScroll;
     [SerializeField] private float scrollSpeed;
     private Vector3 deltaPos;
     private Vector3 firstPos;
 
-    private void Awake()
+    private float scrollPosition;
+    private float lastScrollPosition;
+
+    private bool IsWideScreen => Screen.width > Screen.height;
+    private void Start()
     {
-        int i = 0;
+        pooler = ObjectPooler.Instance;
+
+        SetPanel();
+        CreateButtons(IsWideScreen);
+    }
+
+    private void SetPanel()
+    {
+        if (IsWideScreen)
+        {
+            verticalScroll.parent.parent.gameObject.SetActive(true);
+            lastScrollPosition = verticalScroll.anchoredPosition.y;
+            scrollPanel = verticalScroll;
+        }
+        else
+        {
+            horizontalScroll.parent.parent.gameObject.SetActive(true);
+            lastScrollPosition = horizontalScroll.anchoredPosition.x;
+            scrollPanel = horizontalScroll;
+        }
+    }
+
+    private Vector2 SpawnPos(int x, bool isVertical)
+    {
+        Vector2 spawnPos = Vector2.zero;
+        if (isVertical) spawnPos = new Vector2(-80, 450 - x);
+        else spawnPos = new Vector2(-750 + x, 80);
+
+        return spawnPos;
+    }
+
+    private void CreateButtons(bool isVertical)
+    {
+        int x = 0;
+        for (int i = 0; i < 24; i++)
+        {
+            Vector2 pos = SpawnPos(x, isVertical);
+
+            if (i % 2 != 0)
+            {
+                if (isVertical) pos *= Vector2.left + Vector2.up;
+                else pos *= Vector2.right + Vector2.down;
+                x += 150;
+            }
+
+            SpawnButton(pos);
+        }
+
+        AssignButtons();
+    }
+
+    private void SpawnButton(Vector2 pos)
+    {
+        var buttonObject = pooler.SpawnFromPool("Button", Vector2.zero, Quaternion.identity);
+        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
+
+        buttonObject.transform.SetParent(scrollPanel);
+
+        buttonRect.anchoredPosition = pos; buttonRect.localScale = Vector3.one;
+        buttonList.Add(buttonObject.GetComponent<ButtonBehaviour>());
+    }
+    private void AssignButtons()
+    {
+        int i = 2;
+
         foreach (var unitObject in UnitObjectManager.UnitObjects)
         {
             BuildingObject building = unitObject as BuildingObject;
@@ -34,6 +105,7 @@ public class BuildingPanel : MonoBehaviour
         }
     }
 
+
     private void Update()
     {
         Scroll();
@@ -41,7 +113,10 @@ public class BuildingPanel : MonoBehaviour
 
     private void Scroll()
     {
-        if (!CheckIfOnCanvas) return;
+        if (!CheckIfOnCanvas()) return;
+
+        if(IsWideScreen)scrollPosition = scrollPanel.anchoredPosition.y;
+        else scrollPosition = scrollPanel.anchoredPosition.x;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -51,30 +126,83 @@ public class BuildingPanel : MonoBehaviour
         {
             deltaPos = Input.mousePosition - firstPos;
 
-            Vector3 movePos = scrollObject.position;
-            movePos.y = Mathf.Lerp(movePos.y, movePos.y + (deltaPos.y / Screen.width) * scrollSpeed, Time.deltaTime * scrollSpeed);
+            Vector3 movePos = scrollPanel.position;
+
+            if (IsWideScreen) movePos.y = Mathf.Lerp(movePos.y, movePos.y + (deltaPos.y / Screen.height) * scrollSpeed, Time.deltaTime * scrollSpeed);
+            else movePos.x = Mathf.Lerp(movePos.x, movePos.x + (deltaPos.x / Screen.width) * scrollSpeed, Time.deltaTime * scrollSpeed);
 
             //Clamp can be added if desired 
             //movePos.y = Mathf.Clamp(movePos.y, 0, Mathf.Infinity);
 
-            scrollObject.position = movePos;
+            scrollPanel.position = movePos;
             firstPos = Input.mousePosition;
+
+            CheckIfScrolled();
         }
     }
-    private bool CheckIfOnCanvas
+
+    private void CheckIfScrolled()
     {
-        get
+        if (IsWideScreen)
         {
-            RectTransform rectTransform = GetComponent<RectTransform>();
-            Vector2 localMousePosition = rectTransform.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-
-            if (rectTransform.rect.Contains(localMousePosition))
+            if (lastScrollPosition < scrollPosition - 150)
             {
-                return true;
+                float direction = BottomButton.BottomOfButton;
+                ManageInfiniteScroll(TopButton, direction);
+                ManageInfiniteScroll(TopButton, direction);
+                lastScrollPosition += 150;
             }
-
-            return false;
+            else if (lastScrollPosition >= scrollPosition + 150)
+            {
+                float direction = TopButton.TopOfButton;
+                ManageInfiniteScroll(BottomButton, direction);
+                ManageInfiniteScroll(BottomButton, direction);
+                lastScrollPosition -= 150;
+            }
         }
+        else
+        {
+            if (lastScrollPosition < scrollPosition - 150)
+            {
+                float direction = LeftButton.LeftOfButton;
+                ManageInfiniteScroll(RightButton, direction);
+                ManageInfiniteScroll(RightButton, direction);
+                lastScrollPosition += 150;
+            }
+            else if (lastScrollPosition >= scrollPosition + 150)
+            {
+                float direction = RightButton.RightOfButton;
+                ManageInfiniteScroll(LeftButton, direction);
+                ManageInfiniteScroll(LeftButton, direction);
+                lastScrollPosition -= 150;
+            }
+        }
+    }
+
+    void ManageInfiniteScroll(ButtonBehaviour removedButton, float direction)
+    {
+        Vector3 pos = removedButton.rectTransform.anchoredPosition;
+
+        if (IsWideScreen) pos.y = direction;
+        else pos.x = direction;
+
+        buttonList.Remove(removedButton);
+        pooler.DestroyPoolObject(removedButton.gameObject);
+
+        SpawnButton(pos);
+    }
+    private bool CheckIfOnCanvas()
+    {
+        RectTransform rectTransform = scrollPanel.parent.GetComponent<RectTransform>();
+
+        Vector2 localMousePosition = rectTransform.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+
+        if (rectTransform.rect.Contains(localMousePosition))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public ButtonBehaviour TopButton
@@ -107,14 +235,34 @@ public class BuildingPanel : MonoBehaviour
             return lowestValue;
         }
     }
-
-    public int GetListInt(ButtonBehaviour button)
+    public ButtonBehaviour RightButton
     {
-        return buttonList.IndexOf(button);
+        get
+        {
+            ButtonBehaviour highestValue = buttonList[0];
+            for (int i = 0; i < buttonList.Count; i++)
+            {
+                if (buttonList[i].RightOfButton > highestValue.RightOfButton)
+                {
+                    highestValue = buttonList[i];
+                }
+            }
+            return highestValue;
+        }
     }
-
-    public Transform ButtonTransform(int listInt)
+    public ButtonBehaviour LeftButton
     {
-        return buttonList[listInt - 1].transform;
+        get
+        {
+            ButtonBehaviour lowestValue = buttonList[0];
+            for (int i = 0; i < buttonList.Count; i++)
+            {
+                if (buttonList[i].LeftOfButton < lowestValue.LeftOfButton)
+                {
+                    lowestValue = buttonList[i];
+                }
+            }
+            return lowestValue;
+        }
     }
 }
