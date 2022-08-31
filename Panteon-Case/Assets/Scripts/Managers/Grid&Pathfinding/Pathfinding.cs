@@ -23,6 +23,7 @@ public class Pathfinding
         openList = new List<PathNode> { startNode };
         closedList = new List<PathNode>();
 
+        // Reset
         for (int x = 0; x < Grid.Width; x++)
         {
             for (int y = 0; y < Grid.Height; y++)
@@ -50,6 +51,7 @@ public class Pathfinding
             openList.Remove(currentNode);
             closedList.Add(currentNode);
 
+            // Checks and sets values for neighbouring nodes
             foreach (PathNode neighbourNode in GetNeighbourList(currentNode))
             {
                 if (closedList.Contains(neighbourNode)) continue;

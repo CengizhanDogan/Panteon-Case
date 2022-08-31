@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace Factory
 {
@@ -16,6 +14,7 @@ namespace Factory
         {
             if (IsInitialized) return;
 
+            // Gets all Unit Abilities and adds to dictionary
             var unitTypes = Assembly.GetAssembly(typeof(UnitAbility)).GetTypes().Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(UnitAbility)));
 
             unitAbilitiesByName = new Dictionary<string, Type>();
@@ -25,6 +24,7 @@ namespace Factory
                 var tempUnit = Activator.CreateInstance(type) as UnitAbility;
                 unitAbilitiesByName.Add(tempUnit.Name, type);
             }
+            //
         }
 
         public static UnitAbility GetUnit(string unitType)
@@ -39,13 +39,6 @@ namespace Factory
             }
 
             return null;
-        }
-
-        internal static IEnumerable<string> GetUnitNames()
-        {
-            InitializeFactory();
-
-            return unitAbilitiesByName.Keys;
         }
     }
 }

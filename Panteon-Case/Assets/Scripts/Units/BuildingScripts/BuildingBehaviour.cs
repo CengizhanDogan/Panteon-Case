@@ -20,12 +20,17 @@ public class BuildingBehaviour : UnitBehaviour
     public void CreateFlag()
     {
         BuildingObject building = unit as BuildingObject;
+        // If building is able to produce units create a flag
         if (building.productionList.Count > 0)
         {
             var gameObject = ObjectPooler.Instance.SpawnFromPool("Flag", InputManager.MousePosition, Quaternion.identity);
+
             EventManager.OnBuildingBought.Invoke(gameObject.GetComponent<SpriteRenderer>(), 0);
+
             gameObject.GetComponentInChildren<IPlaceableBuilding>().Move();
+
             Vector2 myPos = transform.position;
+
             gameObject.GetComponentInChildren<IClampable>().CheckClamp = true;
             gameObject.GetComponentInChildren<IClampable>().DoClamp(myPos);
             flagTransform = gameObject.transform;

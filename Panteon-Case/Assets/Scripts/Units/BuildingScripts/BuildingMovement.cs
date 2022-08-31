@@ -59,14 +59,18 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
         Vector3 lastGrid = Vector3.zero;
         while (following)
         {
+            Cancel();
+
             Corner corner = new Corner(coll, transform);
 
             CheckIfMoving(lastGrid, corner);
 
+            // Directly follow mouse position
             Vector3 followPos = InputManager.MousePosition;
 
-            if (DoClamp(anchor)) 
-            { 
+            // Currently clamp is for flag to prevent be placed at absurd distances 
+            if (DoClamp(anchor))
+            {
                 followPos.x = Mathf.Clamp(followPos.x, anchor.x - 3, anchor.x + 4);
                 followPos.y = Mathf.Clamp(followPos.y, anchor.y - 3, anchor.y + 4);
             }
@@ -78,18 +82,26 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
                 following = false;
 
                 PlaceBuilding(corner);
-
             }
             yield return null;
         }
     }
 
+    private void Cancel()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ObjectPooler.Instance.DestroyPoolObject(transform.parent.gameObject);
+            EventManager.OnCancel.Invoke();
+        }
+    }
 
     private void CheckIfMoving(Vector3 lastGrid, Corner corner)
     {
         if (lastGrid != corner.ClosestGrid())
         {
             lastGrid = corner.ClosestGrid();
+            // If building is a different grid once it was changes its position
             if (unitTransform) unitTransform.position = ClosestCorner(corner);
             EventManager.OnGridMove.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2);
         }
@@ -98,12 +110,15 @@ public class BuildingMovement : MonoBehaviour, IPlaceableBuilding, IClampable
     private void PlaceBuilding(Corner corner)
     {
         transform.position = ClosestCorner(corner);
+
         EventManager.OnBuildingPlace.Invoke(this, new Vector2(coll.bounds.extents.x, coll.bounds.extents.y) * 2, 3);
+
         BuildingBehaviour behaviour = unitTransform.GetComponent<BuildingBehaviour>();
 
         behaviour.CreateFlag();
         behaviour.ProcessAbility();
 
+        // To set z position to 0
         unitTransform.position *= (Vector2.up + Vector2.right);
 
         coll.enabled = false;

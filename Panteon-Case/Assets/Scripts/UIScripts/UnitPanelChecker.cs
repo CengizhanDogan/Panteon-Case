@@ -9,6 +9,7 @@ public class UnitPanelChecker : MonoBehaviour
 
     private void Start()
     {
+        // Checks resolution od the screen
         if (Screen.width > Screen.height)
         {
             verticalPanel.SetActive(true);

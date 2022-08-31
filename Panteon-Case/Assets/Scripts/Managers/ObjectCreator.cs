@@ -7,6 +7,7 @@ public static class ObjectCreator
 {
     public static void CreateObjects(UnitObject unitObject, out GameObject unit)
     {
+        // Creates gameobject from scriptable object
         unitObject.unitGameObject = new GameObject(unitObject.unitName);
 
         var gfxRenderer = unitObject.unitGameObject.AddComponent<SpriteRenderer>();
@@ -22,6 +23,7 @@ public static class ObjectCreator
 
     public static void CreateMover(UnitObject unitObject, out GameObject unit)
     {
+        // If object is a building creates mover for it
         BuildingBehaviour behaviour = unitObject.unitGameObject.AddComponent<BuildingBehaviour>();
         behaviour.unit = unitObject;
 

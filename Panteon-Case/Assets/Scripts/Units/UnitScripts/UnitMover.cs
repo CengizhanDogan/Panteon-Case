@@ -41,10 +41,13 @@ public class UnitMover : MonoBehaviour
         if (!moveObject) return;
         this.moveObject = moveObject;
 
+        // Gets current and flag grid to create path
         GridManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
         Vector2 objectGrid = new Vector2(x, y);
 
         GridManager.MainGrid.GetXY(flag.position + Vector3.up * 0.5f, out var z, out var t);
+        //
+
         List<PathNode> path = pathfinding.FindPath((int)objectGrid.x, (int)objectGrid.y, z, t, false);
 
         new Mover(moveObject, path);
@@ -65,20 +68,22 @@ public class UnitMover : MonoBehaviour
             if (!moveObject) return;
             if (moveObject.TryGetComponent(out BuildingBehaviour b)) return;
 
+            // Gets current unit position
             GridManager.MainGrid.GetXY(moveObject.transform.position, out var x, out var y);
             objectGrid = new Vector2(x, y);
 
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mousePos = InputManager.MousePosition;
+
+            // Gets clicked grid
             pathfinding.GetGrid().GetXY(new Vector2(mousePos.x, mousePos.y) + Vector2.up * 0.5f, out int z, out int t);
+
             List<PathNode> path = pathfinding.FindPath((int)objectGrid.x, (int)objectGrid.y, z, t, true);
             moveObject.transform.DOKill();
             new Mover(moveObject, path);
         }
     }
-
-
 }
-
+// New mover must be created for each movement to move soldiers separately and change movement in middle of another
 public class Mover
 {
     private GameObject moveObject;
@@ -104,7 +109,6 @@ public class Mover
             {
                 if (path.Count > i + 2) Move(path, i + 1);
             });
-
         }
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RaycastManager
@@ -25,6 +23,7 @@ public class RaycastManager
                     return true;
                 }
 
+                // If clicked on canvas don't deselect
                 RectTransform[] rectTransforms = GameObject.FindObjectsOfType<RectTransform>();
 
                 foreach (RectTransform t in rectTransforms)
@@ -36,6 +35,7 @@ public class RaycastManager
                         return false;
                     }
                 }
+                //
 
                 EventManager.OnDeselectEvent.Invoke(true);
             }

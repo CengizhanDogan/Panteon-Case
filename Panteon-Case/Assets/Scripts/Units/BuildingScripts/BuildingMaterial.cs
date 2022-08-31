@@ -27,7 +27,8 @@ public class BuildingMaterial : MonoBehaviour
     private void SetRenderer(SpriteRenderer rend, int i)
     {
         spriteRenderer = rend;
-        defaultMat = spriteRenderer.sharedMaterial;
+        // Gets assigned material from scriptable object
+        defaultMat = rend.GetComponent<UnitBehaviour>().unit.material;
         spriteRenderer.sortingOrder = 5;
     }
 
@@ -41,7 +42,10 @@ public class BuildingMaterial : MonoBehaviour
     }
     private void ChangeToDefault(BuildingMovement building, Vector2 v, int sortingOrder)
     {
+        if (!building) return;
+
         spriteRenderer.material = defaultMat;
+        // Flag should be beneath the soldier units 
         if(building.building.unitName == "Flag") sortingOrder = 1;
         spriteRenderer.sortingOrder = sortingOrder;
     }

@@ -21,6 +21,7 @@ public class Corner
 
     private void PlaceCorner()
     {
+        // Finds corner of the building
         Vector3 cornerPos = buildingTransform.position;
 
         cornerPos.y -= buildingCollider.bounds.extents.y;
@@ -52,6 +53,7 @@ public class Corner
     }
     private List<Vector3> RelativeGridPositions()
     {
+        // Gets neighbouring grids to find which is closest
         Grid<PathNode> grid = GridManager.MainGrid;
 
         List<Vector3> grids = new List<Vector3>();

@@ -45,6 +45,7 @@ public class ObjectPooler : MonoBehaviour
 
             UnitObject unitObject = UnitObjectManager.GetUnit(pool.tag);
 
+            // Finds the scriptable object from Resources/UnitObjects and creates gameobject from it
             if (unitObject)
             {
                 ObjectCreator.CreateObjects(unitObject, out var unitGameObject);
@@ -57,6 +58,7 @@ public class ObjectPooler : MonoBehaviour
 
                 unitGameObject.transform.SetParent(transform);
             }
+            //
 
             for (int i = 1; i < pool.size + 1; i++)
             {

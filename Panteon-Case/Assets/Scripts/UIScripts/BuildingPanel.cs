@@ -30,6 +30,7 @@ public class BuildingPanel : MonoBehaviour
 
     private void SetPanel()
     {
+        // Checks screen resolution
         if (IsWideScreen)
         {
             verticalScroll.parent.parent.gameObject.SetActive(true);
@@ -44,15 +45,6 @@ public class BuildingPanel : MonoBehaviour
         }
     }
 
-    private Vector2 SpawnPos(int x, bool isVertical)
-    {
-        Vector2 spawnPos = Vector2.zero;
-        if (isVertical) spawnPos = new Vector2(-80, 450 - x);
-        else spawnPos = new Vector2(-750 + x, 80);
-
-        return spawnPos;
-    }
-
     private void CreateButtons(bool isVertical)
     {
         int x = 0;
@@ -62,8 +54,10 @@ public class BuildingPanel : MonoBehaviour
 
             if (i % 2 != 0)
             {
+                // Creates button in 2 rows
                 if (isVertical) pos *= Vector2.left + Vector2.up;
                 else pos *= Vector2.right + Vector2.down;
+                //
                 x += 150;
             }
 
@@ -73,8 +67,18 @@ public class BuildingPanel : MonoBehaviour
         AssignButtons();
     }
 
+    private Vector2 SpawnPos(int x, bool isVertical)
+    {
+        Vector2 spawnPos = Vector2.zero;
+        if (isVertical) spawnPos = new Vector2(-80, 450 - x);
+        else spawnPos = new Vector2(-750 + x, 80);
+
+        return spawnPos;
+    }
+
     private void SpawnButton(Vector2 pos)
     {
+        // Spawns from pool and sets all positions correctly
         var buttonObject = pooler.SpawnFromPool("Button", Vector2.zero, Quaternion.identity);
         RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
 
@@ -85,8 +89,10 @@ public class BuildingPanel : MonoBehaviour
     }
     private void AssignButtons()
     {
+        // Starting from the second row because first row is invisible by the mask
         int i = 2;
 
+        // Finds and assigns buyable buildings scriptable objects from Object Manager 
         foreach (var unitObject in UnitObjectManager.UnitObjects)
         {
             BuildingObject building = unitObject as BuildingObject;
@@ -115,7 +121,7 @@ public class BuildingPanel : MonoBehaviour
     {
         if (!CheckIfOnCanvas()) return;
 
-        if(IsWideScreen)scrollPosition = scrollPanel.anchoredPosition.y;
+        if (IsWideScreen) scrollPosition = scrollPanel.anchoredPosition.y;
         else scrollPosition = scrollPanel.anchoredPosition.x;
 
         if (Input.GetMouseButtonDown(0))
@@ -128,11 +134,13 @@ public class BuildingPanel : MonoBehaviour
 
             Vector3 movePos = scrollPanel.position;
 
+            // Swerve
             if (IsWideScreen) movePos.y = Mathf.Lerp(movePos.y, movePos.y + (deltaPos.y / Screen.height) * scrollSpeed, Time.deltaTime * scrollSpeed);
             else movePos.x = Mathf.Lerp(movePos.x, movePos.x + (deltaPos.x / Screen.width) * scrollSpeed, Time.deltaTime * scrollSpeed);
 
-            //Clamp can be added if desired 
-            //movePos.y = Mathf.Clamp(movePos.y, 0, Mathf.Infinity);
+            /* Clamp can be added if desired 
+              movePos.y = Mathf.Clamp(movePos.y, 0, Mathf.Infinity);
+            */
 
             scrollPanel.position = movePos;
             firstPos = Input.mousePosition;
@@ -143,6 +151,7 @@ public class BuildingPanel : MonoBehaviour
 
     private void CheckIfScrolled()
     {
+        // Checks if scrolled enough to spawn new buttons
         if (IsWideScreen)
         {
             if (lastScrollPosition < scrollPosition - 150)
@@ -181,6 +190,7 @@ public class BuildingPanel : MonoBehaviour
 
     void ManageInfiniteScroll(ButtonBehaviour removedButton, float direction)
     {
+        // Finds position to spawn
         Vector3 pos = removedButton.rectTransform.anchoredPosition;
 
         if (IsWideScreen) pos.y = direction;
@@ -193,6 +203,7 @@ public class BuildingPanel : MonoBehaviour
     }
     private bool CheckIfOnCanvas()
     {
+        // Checks if mouse is on top of canvas
         RectTransform rectTransform = scrollPanel.parent.GetComponent<RectTransform>();
 
         Vector2 localMousePosition = rectTransform.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
@@ -205,6 +216,8 @@ public class BuildingPanel : MonoBehaviour
         return false;
     }
 
+    #region EdgeButtons
+    // Finds buttons that are on all edges 
     public ButtonBehaviour TopButton
     {
         get
@@ -265,4 +278,5 @@ public class BuildingPanel : MonoBehaviour
             return lowestValue;
         }
     }
+    #endregion
 }

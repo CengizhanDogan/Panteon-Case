@@ -7,6 +7,7 @@ namespace Managers
 {
     public static class UnitObjectManager
     {
+        // Gets all scriptable objects that are created at Resources/UnitObjects file
         public static UnitObject[] UnitObjects => Resources.LoadAll<UnitObject>("UnitObjects");
 
         private static Dictionary<string, UnitObject> unitsByName;
@@ -17,15 +18,18 @@ namespace Managers
         {
             if (IsInitialized) return;
 
+            // Creates dictionary for all units 
             unitsByName = new Dictionary<string, UnitObject>();
 
             foreach (var unitObject in UnitObjects)
             {
                 unitsByName.Add(unitObject.unitName, unitObject);
             }
+            //
         }
         public static UnitObject GetUnit(string unitType)
         {
+            // Gets Unit scriptable object by given string
             InitializeManager();
 
             if (unitsByName.ContainsKey(unitType))
