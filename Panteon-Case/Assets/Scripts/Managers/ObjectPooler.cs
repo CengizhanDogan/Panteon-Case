@@ -14,7 +14,6 @@ public class ObjectPooler : MonoBehaviour
         public GameObject gameObject;
         public int size;
     }
-
     public List<Pool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary;
 

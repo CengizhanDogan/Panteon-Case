@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IPlaceableBuilding
 {
-    void Move();
+    static void Move();
 }
